@@ -9,6 +9,10 @@ server = app.server
 app.title = "CandleDash"
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
+     html.Nav(className = "nav nav-pills", children=[
+                                                    html.A('LINK1', className="nav-item nav-link btn"),
+                                                    html.A('LINK2', className="nav-item nav-link btn") 
+                                                    ]),
     html.Div(id='page-content')
 ])
 
