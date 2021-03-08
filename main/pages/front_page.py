@@ -5,12 +5,18 @@ from app import app
 import json
 from datetime import datetime , date
 from assets import pattern_list 
+import pandas as pd
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 # Dropdown Menu for STOCK TICKERS
-
-
+df_assets = pd.read_csv( './assets/asset_list.csv').dropna()
+asset_options = [{'label': row['symbol']+' ('+ str(row['name'])[:50]+'... )' , 'value': row['symbol'] }  if len(str(row['name'])) >=30 else {'label': row['symbol']+' ('+ str(row['name'])+')' , 'value': row['symbol']} for idx,row in df_assets.iterrows() ] 
+dropdown_assets = dcc.Dropdown(
+                            id = 'dropdown_patterns',
+                            options = asset_options,
+                            placeholder = 'Select Company Symbol',
+                            )
 
 # dropdown menu for CANDLE PATTERNS
 pattern_options = [{'label': v , 'value': k}   for k,v in pattern_list.pattern_list.items()]
@@ -20,8 +26,6 @@ dropdown_patterns = dcc.Dropdown(
                             multi=True,
                             placeholder = 'Select Candlestick Pattern(s)',
                             )
-
-
 
 # DatePicker for DF date range
 date = datetime.date(datetime.now())
@@ -68,7 +72,8 @@ card_options =  html.Div(
                     [
                         html.H5("Card title", className="card-title"),
                         html.P( "this is a placeholder for some options (sliders/calendar/etc)", className="card-text"),
-                        html.Div( [ html.Div(dropdown_patterns,className='col-9 m4',), html.Button('SCAN', className='col-2 mr-0')],className='row' ),
+                        html.Div(dropdown_assets),
+                        html.Div( [ html.Div(dropdown_patterns,className='col-9 m4',), html.Button('SCAN', className='col-2 mr-0')],className='row mt-4' ),
                         html.Div(date_picker, className='mt-4')
 
                     ]
@@ -121,7 +126,7 @@ layout = html.Div([
                     ], width = 8 )
 
             ])
-    ])
+])
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
