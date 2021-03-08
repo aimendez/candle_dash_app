@@ -18,8 +18,3 @@ df_assets = pd.DataFrame.from_dict(
 app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.FLATLY,dbc.themes.GRID])
 server = app.server
 app.layout
-
-
-app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.FLATLY,dbc.themes.GRID])
-server = app.server
-app.layout
