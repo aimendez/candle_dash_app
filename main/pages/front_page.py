@@ -2,7 +2,34 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from app import app
+import json
+from datetime import datetime , date
+from assets import pattern_list 
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------#
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
+# Dropdown Menu for STOCK TICKERS
+
+
+
+# dropdown menu for CANDLE PATTERNS
+pattern_options = [{'label': v , 'value': k}   for k,v in pattern_list.pattern_list.items()]
+dropdown_patterns = dcc.Dropdown(
+                            id = 'dropdown_patterns',
+                            options = pattern_options,
+                            multi=True,
+                            placeholder = 'Select Candlestick Pattern(s)',
+                            )
+
+
+
+# DatePicker for DF date range
+date = datetime.date(datetime.now())
+date_picker = dcc.DatePickerRange(
+                            id='date-picker',
+                            start_date= datetime(2020, 1, 1),
+                            end_date = str(date),
+                            )
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -41,6 +68,9 @@ card_options =  html.Div(
                     [
                         html.H5("Card title", className="card-title"),
                         html.P( "this is a placeholder for some options (sliders/calendar/etc)", className="card-text"),
+                        html.Div( [ html.Div(dropdown_patterns,className='col-9 m4',), html.Button('SCAN', className='col-2 mr-0')],className='row' ),
+                        html.Div(date_picker, className='mt-4')
+
                     ]
             ),
         className="card bg-light ml-4 mt-4"
@@ -64,9 +94,6 @@ card_plot = html.Div(
         )
     ]
 )
-
-
-
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
