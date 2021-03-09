@@ -6,6 +6,7 @@ import json
 from datetime import datetime , date
 from assets import pattern_list 
 import pandas as pd
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -18,7 +19,7 @@ dropdown_assets = dcc.Dropdown(
                             placeholder = 'Select Company Symbol',
                             )
 
-# dropdown menu for CANDLE PATTERNS
+# Dropdown menu for CANDLE PATTERNS
 pattern_options = [{'label': v , 'value': k}   for k,v in pattern_list.pattern_list.items()]
 dropdown_patterns = dcc.Dropdown(
                             id = 'dropdown_patterns',
@@ -27,13 +28,13 @@ dropdown_patterns = dcc.Dropdown(
                             placeholder = 'Select Candlestick Pattern(s)',
                             )
 
-# DatePicker for DF date range
-date = datetime.date(datetime.now())
+# DatePicker for DATE RANGE
 date_picker = dcc.DatePickerRange(
                             id='date-picker',
                             start_date= datetime(2020, 1, 1),
-                            end_date = str(date),
+                            end_date = str(datetime.date(datetime.now())),
                             )
+
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
@@ -88,10 +89,6 @@ card_plot = html.Div(
         dbc.Card(
             dbc.CardBody(
                 [
-                    html.H5("Here's a plot", className="card-title"),
-                    html.P(
-                        "this is a placeholder for plot",
-                        className="card-text"),
                     dcc.Graph(id = 'ohlc_plot'),
                 ]
             ),
