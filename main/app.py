@@ -2,6 +2,7 @@ import dash
 import dash_bootstrap_components as dbc
 import pandas as pd
 import alpaca_trade_api as tradeapi 
+import utils 
 
 api_ = tradeapi.REST(   "PKHR9AOB6FNQ8SUFY16X" ,
 						"AbAIn4cBo8NdciOedKzNzpaqo5GVUzyf74QYnJqk",

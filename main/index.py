@@ -3,6 +3,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 from app import app
 from pages import test, front_page
+import utils 
 
 server = app.server
 

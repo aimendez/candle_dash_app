@@ -1,11 +1,19 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+from dash.dependencies import Input, Output, State
+
+import plotly.graph_objs as go 
+from plotly.subplots import make_subplots
+import plotly.express as px
+
+
 from app import app
 import json
 from datetime import datetime , date
 from assets import pattern_list 
 import pandas as pd
+import utils 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
@@ -14,7 +22,7 @@ import pandas as pd
 df_assets = pd.read_csv( './assets/asset_list.csv').dropna()
 asset_options = [{'label': row['symbol']+' ('+ str(row['name'])[:50]+'... )' , 'value': row['symbol'] }  if len(str(row['name'])) >=30 else {'label': row['symbol']+' ('+ str(row['name'])+')' , 'value': row['symbol']} for idx,row in df_assets.iterrows() ] 
 dropdown_assets = dcc.Dropdown(
-                            id = 'dropdown_patterns',
+                            id = 'dropdown_assets',
                             options = asset_options,
                             placeholder = 'Select Company Symbol',
                             )
@@ -129,7 +137,44 @@ layout = html.Div([
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 
 
+@app.callback( [ Output('ohlc_plot', 'figure'),
+                ],              
+               [Input('dropdown_assets', 'value'),
+               ]
+             )
+def forecast_reversal(symbol):
+    print(symbol)
+    if symbol != None:
+        df = utils.get_data(symbol)
+        fig = go.Figure()
+        #hovertext = []
+        #for i in range(len(df.close)):
+        #    cycle_day = str(df.up_cycle[i]) if str(df.up_cycle[i])!= 'nan' else str(df.down_cycle[i])
+        #    hovertext.append(f'{str(df.index[i])} <br>O: {str(df.open[i])} <br>H: {df.high[i]} <br>L: {df.low[i]} <br>C:{df.close[i]} <br>N: {cycle_day}')
+        
+        trace = go.Candlestick( x = df.index ,
+                                open = df.open,
+                                high = df.high,
+                                low = df.low,
+                                close = df.close,
+                                #text=hovertext,
+                                #hoverinfo='text'
+                                )
+        layout = go.Layout( title = symbol + ' - Candlestick Chart',
+                            xaxis = {'title' : 'Date', 'showgrid':False, 'type':'category'},
+                            yaxis = {'title': 'Price', 'showgrid':False},
+                            xaxis_rangeslider_visible = False,
+                            plot_bgcolor = '#FFFFFF',
+                            autosize=False,
+                            #width=2300,
+                            #height=900,
+                        )
 
+        fig.add_trace(trace)
+        fig.update_layout(layout)
 
-
+        return [fig] 
+    else:
+        fig = go.Figure()
+        return [fig]
 
