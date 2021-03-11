@@ -186,8 +186,10 @@ layout = html.Div([
 def Candlestick_plot(symbol, start_date, end_date):
     if symbol != None:
         start_date = start_date.split('T')[0]
-        df = utils.get_data(symbol, start_date, end_date)
         name = df_assets[df_assets['symbol'] == symbol].name
+        df = utils.get_data(symbol, start_date, end_date)
+        if len(df) == 0:
+            return [ go.Figure(), symbol, name ]
 
         # exception if date does not match history
         try:
