@@ -70,7 +70,7 @@ card1 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H5(id='symbol_name_card', className="card-title"),
+                        html.H3(id='symbol_name_card', className="card-title"),
                         html.P(id='symbol_name_card2', className="card-text"),
                     ]
             ),
@@ -173,6 +173,7 @@ layout = html.Div([
 # CALLBACKS 
 
 
+# plot and company info
 @app.callback( [ Output('ohlc_plot', 'figure'),
                  Output('symbol_name_card', 'children'),
                  Output('symbol_name_card2', 'children')
@@ -184,9 +185,17 @@ layout = html.Div([
              )
 def Candlestick_plot(symbol, start_date, end_date):
     if symbol != None:
-        ticker = yf.Ticker(symbol)
-        df = utils.get_data(symbol)
-        df = df.loc[start_date:end_date, :]
+        start_date = start_date.split('T')[0]
+        df = utils.get_data(symbol, start_date, end_date)
+        name = df_assets[df_assets['symbol'] == symbol].name
+
+        # exception if date does not match history
+        try:
+            df = df.loc[start_date:end_date, :]
+        except:
+            df = df  
+
+        # fig of ohlc plot
         fig = go.Figure()
         trace = go.Candlestick( x = df.index ,
                                 open = df.open,
@@ -201,11 +210,10 @@ def Candlestick_plot(symbol, start_date, end_date):
                             plot_bgcolor = '#FFFFFF',
                             autosize=False,
                         )
-
         fig.add_trace(trace)
         fig.update_layout(layout)
 
-        return [fig, symbol, ticker.info['longName']] 
+        return [fig, symbol, name ] 
     else:
         return no_update
 
