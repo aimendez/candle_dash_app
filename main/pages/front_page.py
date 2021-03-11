@@ -79,6 +79,34 @@ card1 =  html.Div(
     ]
 )
 
+card2 =  html.Div( 
+    [
+        dbc.Card( 
+                dbc.CardBody(
+                    [
+                        html.H5('', className="card-title"),
+                        html.P('', className="card-text"),
+                    ]
+            ),
+        className="card bg-light  mt-4 mr-4"
+        )
+    ]
+)
+
+card3 =  html.Div( 
+    [
+        dbc.Card( 
+                dbc.CardBody(
+                    [
+                        html.H5('', className="card-title"),
+                        html.P('', className="card-text"),
+                    ]
+            ),
+        className="card bg-light  mt-4 mr-4"
+        )
+    ]
+)
+
 card_options =  html.Div( 
     [
         dbc.Card( 
@@ -129,8 +157,8 @@ layout = html.Div([
                     dbc.Row( 
                         [
                         dbc.Col(card1),
-                        dbc.Col(card1),
-                        dbc.Col(card1)
+                        dbc.Col(card2),
+                        dbc.Col(card3)
                         ]),
                     dbc.Row(
                         dbc.Col(card_plot)
@@ -146,6 +174,8 @@ layout = html.Div([
 
 
 @app.callback( [ Output('ohlc_plot', 'figure'),
+                 Output('symbol_name_card', 'children'),
+                 Output('symbol_name_card2', 'children')
                 ],              
                [Input('dropdown_assets', 'value'),
                 Input('date-picker', 'start_date'),
@@ -154,6 +184,7 @@ layout = html.Div([
              )
 def Candlestick_plot(symbol, start_date, end_date):
     if symbol != None:
+        ticker = yf.Ticker(symbol)
         df = utils.get_data(symbol)
         df = df.loc[start_date:end_date, :]
         fig = go.Figure()
@@ -174,22 +205,7 @@ def Candlestick_plot(symbol, start_date, end_date):
         fig.add_trace(trace)
         fig.update_layout(layout)
 
-        return [fig] 
-    else:
-        fig = go.Figure()
-        return [fig]
-
-
-
-@app.callback( [ Output('symbol_name_card', 'children'),
-                 Output('symbol_name_card2', 'children')
-                ],              
-               [Input('dropdown_assets', 'value'),
-               ]
-             )
-def card_1(symbol):
-    if symbol != None:
-        ticker = yf.Ticker(symbol)
-        return [ symbol, ticker.info['longName'] ]
+        return [fig, symbol, ticker.info['longName']] 
     else:
         return no_update
+
