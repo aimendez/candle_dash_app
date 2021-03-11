@@ -2,6 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output, State
+from dash import no_update
 
 import plotly.graph_objs as go 
 from plotly.subplots import make_subplots
@@ -14,9 +15,12 @@ from datetime import datetime , date
 from assets import pattern_list 
 import pandas as pd
 import utils 
+import yfinance  as yf
+
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
+# DASH COMPONENTS
 
 # Dropdown Menu for STOCK TICKERS
 df_assets = pd.read_csv( './assets/asset_list.csv').dropna()
@@ -45,6 +49,7 @@ date_picker = dcc.DatePickerRange(
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
+# LAYOUT CARDS
 
 card_header_dash = html.Div( 
     [
@@ -65,8 +70,8 @@ card1 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H5("Card title", className="card-title"),
-                        html.P( "this is a placeholder", className="card-text"),
+                        html.H5(id='symbol_name_card', className="card-title"),
+                        html.P(id='symbol_name_card2', className="card-text"),
                     ]
             ),
         className="card bg-light  mt-4 mr-4"
@@ -82,8 +87,9 @@ card_options =  html.Div(
                         html.H5("Card title", className="card-title"),
                         html.P( "this is a placeholder for some options (sliders/calendar/etc)", className="card-text"),
                         html.Div(dropdown_assets),
-                        html.Div( [ html.Div(dropdown_patterns,className='col-9 m4',), html.Button('SCAN', className='col-2 mr-0')],className='row mt-4' ),
-                        html.Div(date_picker, className='mt-4')
+                        html.Div( [ html.Div(dropdown_patterns,className='col-12 m4',)],className='row mt-4' ),
+                        html.Div(date_picker, className='mt-4'),
+                        html.Div( html.Button('SCAN', className='col-2 mr-4 mt-4') )
 
                     ]
             ),
@@ -108,6 +114,7 @@ card_plot = html.Div(
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
+# LAYOUT 
 
 layout = html.Div([ 
 
@@ -135,30 +142,26 @@ layout = html.Div([
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
+# CALLBACKS 
 
 
 @app.callback( [ Output('ohlc_plot', 'figure'),
                 ],              
                [Input('dropdown_assets', 'value'),
+                Input('date-picker', 'start_date'),
+                Input('date-picker', 'end_date')
                ]
              )
-def forecast_reversal(symbol):
-    print(symbol)
+def Candlestick_plot(symbol, start_date, end_date):
     if symbol != None:
         df = utils.get_data(symbol)
+        df = df.loc[start_date:end_date, :]
         fig = go.Figure()
-        #hovertext = []
-        #for i in range(len(df.close)):
-        #    cycle_day = str(df.up_cycle[i]) if str(df.up_cycle[i])!= 'nan' else str(df.down_cycle[i])
-        #    hovertext.append(f'{str(df.index[i])} <br>O: {str(df.open[i])} <br>H: {df.high[i]} <br>L: {df.low[i]} <br>C:{df.close[i]} <br>N: {cycle_day}')
-        
         trace = go.Candlestick( x = df.index ,
                                 open = df.open,
                                 high = df.high,
                                 low = df.low,
                                 close = df.close,
-                                #text=hovertext,
-                                #hoverinfo='text'
                                 )
         layout = go.Layout( title = symbol + ' - Candlestick Chart',
                             xaxis = {'title' : 'Date', 'showgrid':False, 'type':'category'},
@@ -166,8 +169,6 @@ def forecast_reversal(symbol):
                             xaxis_rangeslider_visible = False,
                             plot_bgcolor = '#FFFFFF',
                             autosize=False,
-                            #width=2300,
-                            #height=900,
                         )
 
         fig.add_trace(trace)
@@ -178,3 +179,17 @@ def forecast_reversal(symbol):
         fig = go.Figure()
         return [fig]
 
+
+
+@app.callback( [ Output('symbol_name_card', 'children'),
+                 Output('symbol_name_card2', 'children')
+                ],              
+               [Input('dropdown_assets', 'value'),
+               ]
+             )
+def card_1(symbol):
+    if symbol != None:
+        ticker = yf.Ticker(symbol)
+        return [ symbol, ticker.info['longName'] ]
+    else:
+        return no_update
