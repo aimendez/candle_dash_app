@@ -197,7 +197,7 @@ def Candlestick_plot(symbol, start_date, end_date):
         df = utils.get_data(symbol, start_date, end_date)
         if len(df) == 0:
             color = {'color':'black'} 
-            return [ go.Figure(), symbol, name, '--', '--', color ]
+            return [ go.Figure(), symbol, name, '---', '---  (---%)', color ]
 
         # exception if date does not match history
         try:

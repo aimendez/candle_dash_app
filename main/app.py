@@ -15,7 +15,7 @@ df_assets = pd.DataFrame(
 				 			 'name':[ asset.name for asset in assets if asset.tradable == True],
 				 			 'exchange':[ asset.exchange for asset in assets if asset.tradable == True],
 				 			 'status':[ asset.status for asset in assets if asset.tradable == True],
-							}).to_csv('./assets/asset_list.csv')
+							}).sort_values('symbol').to_csv('./assets/asset_list.csv')
 
 app = dash.Dash(__name__, suppress_callback_exceptions=True, external_stylesheets=[dbc.themes.FLATLY,dbc.themes.GRID])
 server = app.server
