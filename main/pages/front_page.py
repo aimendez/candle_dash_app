@@ -181,7 +181,7 @@ layout = html.Div([
                  Output('price_diff_card', 'children'),
                  Output('price_diff_card', 'style')
                 ],              
-                
+
                [Input('dropdown_assets', 'value'),
                 Input('date-picker', 'start_date'),
                 Input('date-picker', 'end_date')
@@ -196,7 +196,8 @@ def Candlestick_plot(symbol, start_date, end_date):
         start_date = start_date.split('T')[0]
         df = utils.get_data(symbol, start_date, end_date)
         if len(df) == 0:
-            return [ go.Figure(), symbol, name, '--', '--', '--' ]
+            color = {'color':'black'} 
+            return [ go.Figure(), symbol, name, '--', '--', color ]
 
         # exception if date does not match history
         try:
