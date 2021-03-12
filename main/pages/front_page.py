@@ -43,7 +43,7 @@ dropdown_patterns = dcc.Dropdown(
 # DatePicker for DATE RANGE
 date_picker = dcc.DatePickerRange(
                             id='date-picker',
-                            start_date= datetime(2020, 1, 1),
+                            start_date= datetime(2021, 1, 1),
                             end_date = str(datetime.date(datetime.now())),
                             )
 
@@ -56,7 +56,7 @@ card_header_dash = html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H5("LANDAU APP", className="card-title", style={'textAlign':"center"}),
+                        html.H3("CANDLE FINDER", className="card-title", style={'textAlign':"center"}),
                         html.P("this is a placeholder for a nice header", className="card-text", style={'textAlign':"center"}),
                     ]
             ),
@@ -71,7 +71,7 @@ card1 =  html.Div(
                 dbc.CardBody(
                     [
                         html.H3(id='symbol_name_card', className="card-title"),
-                        html.P(id='symbol_name_card2', className="card-text"),
+                        html.H5(id='symbol_name_card2', className="card-text"),
                     ]
             ),
         className="card bg-light  mt-4 mr-4"
@@ -98,8 +98,8 @@ card3 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H5('', className="card-title"),
-                        html.P('', className="card-text"),
+                        html.H3(id = 'close_price_card', className="card-title"),
+                        html.Pre( html.H5(id = 'price_diff_card', className="card-text"), className = 'mb-0' ),
                     ]
             ),
         className="card bg-light  mt-4 mr-4"
@@ -176,7 +176,11 @@ layout = html.Div([
 # plot and company info
 @app.callback( [ Output('ohlc_plot', 'figure'),
                  Output('symbol_name_card', 'children'),
-                 Output('symbol_name_card2', 'children')
+                 Output('symbol_name_card2', 'children'),
+                 Output('close_price_card', 'children'),
+                 Output('price_diff_card', 'children'),
+                 Output('price_diff_card', 'style')
+
                 ],              
                [Input('dropdown_assets', 'value'),
                 Input('date-picker', 'start_date'),
@@ -185,11 +189,14 @@ layout = html.Div([
              )
 def Candlestick_plot(symbol, start_date, end_date):
     if symbol != None:
-        start_date = start_date.split('T')[0]
+         #------------------ NAME CARD ------------------------#
         name = df_assets[df_assets['symbol'] == symbol].name
+
+        #------------------- DF -------------------------------#
+        start_date = start_date.split('T')[0]
         df = utils.get_data(symbol, start_date, end_date)
         if len(df) == 0:
-            return [ go.Figure(), symbol, name ]
+            return [ go.Figure(), symbol, name, '--', '--', '--' ]
 
         # exception if date does not match history
         try:
@@ -197,7 +204,14 @@ def Candlestick_plot(symbol, start_date, end_date):
         except:
             df = df  
 
-        # fig of ohlc plot
+        #------------------ PRICE CARD ------------------------#
+        last_close = str( round(df.close[-1], 2) ) + ' USD'
+        last_diff = round(df.close[-1] - df.close[-2] , 2)
+        last_pct = round( (df.close[-1] - df.close[-2])/df.close[-1] *100 ,2 )
+        pct_change = str(last_diff) + f' USD (+{last_pct}%)' if last_pct>0 else str(last_diff) + f' USD ({last_pct}%)'
+        color = {'color':'green'}  if last_pct>0 else {'color':'red'}
+
+        #------------------ CHART CARD ------------------------#
         fig = go.Figure()
         trace = go.Candlestick( x = df.index ,
                                 open = df.open,
@@ -215,7 +229,7 @@ def Candlestick_plot(symbol, start_date, end_date):
         fig.add_trace(trace)
         fig.update_layout(layout)
 
-        return [fig, symbol, name ] 
+        return [fig, symbol, name, last_close, pct_change, color ] 
     else:
         return no_update
 

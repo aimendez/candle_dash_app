@@ -12,8 +12,8 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
      html.Nav(className = "navbar navbar-expand-lg navbar-dark bg-dark", children=[
                                                     html.A('LANDAU DASH', className="nav-item nav-link btn"), 
-                                                    html.A('LINK1', className="nav-link btn"),
-                                                    html.A('LINK2', className="nav-link btn") 
+                                                    html.A('Screener', className="nav-link btn"),
+                                                    html.A('CandleFinder', className="nav-link btn") 
                                                     ]),
     html.Div(id='page-content')
 ])
