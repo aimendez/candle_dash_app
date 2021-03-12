@@ -180,8 +180,8 @@ layout = html.Div([
                  Output('close_price_card', 'children'),
                  Output('price_diff_card', 'children'),
                  Output('price_diff_card', 'style')
-
                 ],              
+                
                [Input('dropdown_assets', 'value'),
                 Input('date-picker', 'start_date'),
                 Input('date-picker', 'end_date')
