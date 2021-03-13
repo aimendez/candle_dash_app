@@ -74,8 +74,8 @@ card1 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3(id='symbol_name_card', className="card-title"),
-                        html.H5(id='symbol_name_card2', className="card-text text-muted"),
+                        html.H3('Ticker', id='symbol_name_card', className="card-title"),
+                        html.H5('Company Name', id='symbol_name_card2', className="card-text text-muted"),
                     ]
             ),
         className="card bg-light mt-4 mr-4"
@@ -88,8 +88,8 @@ card2 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3(id = 'exchange_card', className="card-title"),
-                        html.H5(id = 'class_card', className="card-text text-muted"),
+                        html.H3('Exchange', id = 'exchange_card', className="card-title"),
+                        html.H5('Class', id = 'class_card', className="card-text text-muted"),
                     ]
             ),
         className="card bg-light  mt-4 mr-4"
@@ -102,8 +102,8 @@ card3 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3(id = 'close_price_card', className="card-title"),
-                        html.Pre( html.H5(id = 'price_diff_card', className="card-text"), className = 'mb-0' ),
+                        html.H3('---' , id = 'close_price_card', className="card-title"),
+                        html.Pre( html.H5('---  (---%)' , id = 'price_diff_card', className="card-text"), className = 'mb-0' ),
                     ]
             ),
         className="card bg-light  mt-4 mr-4"
