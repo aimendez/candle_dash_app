@@ -61,7 +61,7 @@ card_header_dash = html.Div(
                 dbc.CardBody(
                     [
                         html.H3("CANDLE FINDER", className="card-title", style={'textAlign':"center"}),
-                        html.P("this is a placeholder for a nice header", className="card-text", style={'textAlign':"center"}),
+                        html.P("brief description of the dash", className="card-text", style={'textAlign':"center"}),
                     ]
             ),
         className="card bg-light ml-4 mt-4 mr-4"
@@ -102,7 +102,7 @@ card3 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3('---' , id = 'close_price_card', className="card-title"),
+                        html.H3('Price' , id = 'close_price_card', className="card-title"),
                         html.Pre( html.H5('---  (---%)' , id = 'price_diff_card', className="card-text"), className = 'mb-0' ),
                     ]
             ),
@@ -132,8 +132,8 @@ card_options =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H5("Card title", className="card-title"),
-                        html.P( "this is a placeholder for some options (sliders/calendar/etc)", className="card-text"),
+                        html.H5("OPTIONS", className="card-title"),
+                        html.P( "description of functionality", className="card-text"),
                         html.Div(dropdown_assets),
                         html.Div( [ html.Div(dropdown_patterns,className='col-12 m4',)],className='row mt-4' ),
                         html.Div(date_picker, className='mt-4'),
@@ -225,7 +225,7 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
     if symbol != None:
          #------------------ NAME CARD ------------------------#
         name = df_assets[df_assets['symbol'] == symbol].name
-        class_ = str(df_assets[df_assets['symbol'] == symbol]['class'].values[0]).replace('_', ' ')
+        class_ = str(df_assets[df_assets['symbol'] == symbol]['class'].values[0]).replace('_', ' ').upper()
         exchange = df_assets[df_assets['symbol'] == symbol]['exchange'].values[0]
 
         #------------------- DF -------------------------------#
