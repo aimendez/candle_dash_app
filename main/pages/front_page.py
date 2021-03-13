@@ -221,7 +221,7 @@ layout = html.Div([
 
                [State('dropdown_patterns', 'value')]
              )
-def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_list):
+def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
     if symbol != None:
          #------------------ NAME CARD ------------------------#
         name = df_assets[df_assets['symbol'] == symbol].name
@@ -271,18 +271,18 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_list):
 
         #----------------- PATTERN CHART --------------------#
         changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
-        if 'scan-button' in changed_id and pattern_list!=None:
+        if 'scan-button' in changed_id and pattern_options!=None:
         #if n_clicks==1 and pattern_list!=None:
-            if len(pattern_list)!=0:
+            if len(pattern_options)!=0:
                 #find pattern and add to figure
-                for pattern in pattern_list:
+                for pattern in pattern_options:
                     pattern_func = abstract.Function(pattern)
                     pattern_df = pattern_func(df.open, df.high, df.low, df.close) 
                     pattern_mask = [True if idx_tmp != 0 else False for idx_tmp in pattern_df]
                     #pattern_idx = np.nonzero( np.array(pattern_df) )
                     trace_pattern = go.Scatter( x = df.index[pattern_mask],
                                                 y = df.high[pattern_mask] + abs( df.open[pattern_mask] - df.close[pattern_mask] ),
-                                                name = pattern ,
+                                                name = pattern_list.pattern_list[pattern] ,
                                                 mode='markers',
                                                 marker=dict(
                                                             size = 15,
@@ -308,7 +308,7 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_list):
                 color, 
                 'Exchange: '+ str(exchange) , 
                 class_, 
-                pattern_list 
+                pattern_options 
                 ] 
 
     else:
