@@ -63,7 +63,7 @@ pattern_list = {
 }
 
 pattern_img = {
-"CDL2CROWS":["http://static.incrediblecharts.com/images/candlestick-patterns/twocrows-minus.svg"],
+"CDL2CROWS":["http://static.incrediblecharts.com/images/candlestick-patterns/twocrows-minus.svg", 'up trend', '', 'consolidation'],
 "CDL3BLACKCROWS":["http://static.incrediblecharts.com/images/candlestick-patterns/threeblackcrows-minus.svg", "bearish", "strong", "reversal"],
 "CDL3INSIDE":["http://static.incrediblecharts.com/images/candlestick-patterns/threeinsideup-plus.svg", "bullish/bearish", "weak", "reversal"],
 "CDL3LINESTRIKE":[ "http://static.incrediblecharts.com/images/candlestick-patterns/threelinestrike-minus.svg", "bullish/bearish", "reliable/strong", "reversal"],

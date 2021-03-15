@@ -315,15 +315,13 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
         return no_update
 
 # callback for pattern card images
-
-# plot and company info
 @app.callback( [ 
                  Output('pattern_description_id', 'children'),
-                ],              
+                ],              #
 
                [
                 Input('scan-button', 'n_clicks')
-               ], 
+               ], #
 
                [State('dropdown_patterns', 'value')]
              )
@@ -336,14 +334,57 @@ def candlestick_images(n_clicks, pattern_options):
         if len(pattern_options)!=0:
             tabs = [] 
             for i in range( len(pattern_options) ):
-                tab_tmp = dcc.Tab( label = names_dict[pattern_options[i]] , 
-                                children = [ html.Div(
-                                                 html.Img(src= img_dict[pattern_options[i]][0],style={'height':'85%', 'width':'25%'} ),
-                                                 className = 'mt-4 mb-2'
-                                                  )
-                                            ],
-                                style={'padding':'0','line-height': '3v'},selected_style={'padding': '0','line-height': '3v'}
-                                )
+                # bull/bear
+                if len(img_dict[pattern_options[i]]) > 1:
+                    direction = img_dict[pattern_options[i]][1]
+                    color1 = 'success' if direction == 'bullish' or direction == 'up trend' else 'danger' if direction == 'bearish' or direction == 'down trend' else 'warning'
+
+                    strength = img_dict[pattern_options[i]][2]
+                    color2 = 'danger' if strength == 'strong' else 'warning' if strength == 'reliable' else 'secondary'
+
+                    indicator = img_dict[pattern_options[i]][3]
+                    color3 = 'danger' if indicator == 'reversal' else 'warning' if indicator == 'consolidation' else 'success'
+                else:
+                    direction = '' 
+                    strength = ''
+                    indicator = ''
+
+                try:
+                    split = direction.split('/')
+                    split_c1 = 'success' if split[0] == 'bullish' or split[0] == 'up trend' else 'danger' if split[0] == 'bearish' or split[0] == 'down trend' else 'warning'
+                    split_c2 = 'success' if split[1] == 'bullish' or split[1] == 'up trend' else 'danger' if split[1] == 'bearish' or split[1] == 'down trend' else 'warning'
+
+                    tab_tmp = dcc.Tab( label = names_dict[pattern_options[i]] , 
+                                       children = [  html.Div([
+                                                                 html.Div(html.Img(src= img_dict[pattern_options[i]][0],style={'height':'90%', 'width':'70%'}), className='col ml-4' ),
+                                                                 html.Div([
+                                                                    html.H5(names_dict[pattern_options[i]], style = {'fontSize':'10'}, className = 'ml-4 mt-2 row'),
+                                                                    html.Div( [dbc.Badge(split[0], pill=True, color=split_c1,  style={'width':'4.7rem'} ), 
+                                                                               dbc.Badge( split[1], pill=True, color=split_c2, className="ml-2", style={'width':'4.7rem'}  )
+                                                                               ], className= 'ml-4 mt-2 row'),
+                                                                    html.Div( [ dbc.Badge(strength, pill=True, color=color1,  style={'width':'10rem'})], className="ml-4 mt-2 row"),
+                                                                    html.Div( [ dbc.Badge(indicator, pill=True, color=color1, style={'width':'10rem'})], className="ml-4 mt-2 row"),
+                                                                    ], className='col')
+                                                               ], className = 'row mt-4 mb-2'
+                                                      )
+                                                ],
+                                    style={'padding':'0','line-height': '3v'}, selected_style={'padding': '0','line-height': '3v'}
+                                    )
+                except:
+                    tab_tmp = dcc.Tab( label = names_dict[pattern_options[i]] , 
+                                       children = [  html.Div([
+                                                                 html.Div(html.Img(src= img_dict[pattern_options[i]][0],style={'height':'90%', 'width':'70%'}), className='col ml-4' ),
+                                                                 html.Div([
+                                                                    html.H5(names_dict[pattern_options[i]], style = {'fontSize':'10'}, className = 'ml-4 mt-2 row'),
+                                                                    html.Div(dbc.Badge(direction, pill=True, color=color1, style={'width':'10rem'}) ,className="ml-4 mt-2 row"),
+                                                                    html.Div(dbc.Badge(strength, pill=True,  color=color1, style={'width':'10rem'}), className="ml-4 mt-2 row"),
+                                                                    html.Div(dbc.Badge(indicator, pill=True, color=color1, style={'width':'10rem'}), className="ml-4 mt-2 row"),
+                                                                    ], className='col')
+                                                               ], className = 'row mt-4 mb-2'
+                                                      )
+                                                ],
+                                    style={'padding':'0','line-height': '3v'}, selected_style={'padding': '0','line-height': '3v'}
+                                    )
                 tabs.append(tab_tmp)
             tabs_card = dcc.Tabs( value = 'tab-1', 
                                   children = tabs,
