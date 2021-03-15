@@ -129,33 +129,32 @@ card_plot = html.Div(
 
 card_options =  html.Div( 
     [
-        dbc.Card( 
-                dbc.CardBody(
-                    [
-                        html.H5("OPTIONS", className="card-title"),
-                        html.P( "description of functionality", className="card-text"),
-                        html.Div(dropdown_assets),
-                        html.Div( [ html.Div(dropdown_patterns,className='col-12 m4',)],className='row mt-4' ),
-                        html.Div(date_picker, className='mt-4'),
-                        html.Div( html.Button('SCAN', id='scan-button', className='col-2 mr-4 mt-4') )
-
-                    ]
-            ),
-        className="card bg-light ml-4 mt-4"
-        )
+        dbc.Card( [
+                        dbc.CardHeader("OPTIONS"),
+        
+                        dbc.CardBody(
+                            [
+                                #html.H5("OPTIONS", className="card-title"),
+                                html.P( "description of functionality", className="card-text"),
+                                html.Div(dropdown_assets),
+                                html.Div( [ html.Div(dropdown_patterns,className='col-12 m4',)],className='row mt-4' ),
+                                html.Div(date_picker, className='mt-4'),
+                                html.Div( html.Button('SCAN', id='scan-button', className='col-2 mr-4 mt-4') )
+        
+                            ]
+                    ),
+                ],className="card bg-light ml-4 mt-4")
     ]
 )
 
 card_patterns =  html.Div( 
     [
-        dbc.Card( 
-                dbc.CardBody(
-                    [
-                        html.P(id='pattern_list_card', className="card-text"),
-                    ]
-            ),
-        className="card bg-light ml-4 mt-4"#, style={"width": "35rem"}
-        )
+        dbc.Card( [
+        
+                        dbc.CardHeader("CANDLESTICK PATTERNS"),
+                        html.Div(id='pattern_description_id')#, style={'width':'30rem'})
+        
+               ],className="card bg-light ml-4 mt-4 mb-5")#, style={'height':'16.2rem'} )
     ]
 )
 
@@ -208,7 +207,6 @@ layout = html.Div([
                  Output('price_diff_card', 'style'),
                  Output('exchange_card', 'children'),
                  Output('class_card', 'children'),
-                 Output('pattern_list_card', 'children'),
 
 
                 ],              
@@ -223,7 +221,7 @@ layout = html.Div([
              )
 def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
     if symbol != None:
-         #------------------ NAME CARD ------------------------#
+        #------------------ NAME CARD ------------------------#
         name = df_assets[df_assets['symbol'] == symbol].name
         class_ = str(df_assets[df_assets['symbol'] == symbol]['class'].values[0]).replace('_', ' ').upper()
         exchange = df_assets[df_assets['symbol'] == symbol]['exchange'].values[0]
@@ -233,7 +231,7 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
         df = utils.get_data(symbol, start_date, end_date)
         if len(df) == 0:
             color = {'color':'black'} 
-            return [ go.Figure(), symbol, name, '---', '---  (---%)', color, '---',  '---' , [] ]
+            return [ go.Figure(), symbol, name, '---', '---  (---%)', color, '---',  '---'  ]
 
         # exception if date does not match history
         try:
@@ -298,6 +296,9 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
                                             xanchor="left",
                                             x=0
                                         ))
+
+
+
                
 
         return [fig,
@@ -308,9 +309,51 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
                 color, 
                 'Exchange: '+ str(exchange) , 
                 class_, 
-                pattern_options 
                 ] 
 
     else:
         return no_update
 
+# callback for pattern card images
+
+# plot and company info
+@app.callback( [ 
+                 Output('pattern_description_id', 'children'),
+                ],              
+
+               [
+                Input('scan-button', 'n_clicks')
+               ], 
+
+               [State('dropdown_patterns', 'value')]
+             )
+def candlestick_images(n_clicks, pattern_options):
+    img_dict = pattern_list.pattern_img
+    names_dict = pattern_list.pattern_list
+
+    changed_id = [p['prop_id'] for p in dash.callback_context.triggered][0]
+    if 'scan-button' in changed_id and pattern_options!=None:
+        if len(pattern_options)!=0:
+            tabs = [] 
+            for i in range( len(pattern_options) ):
+                tab_tmp = dcc.Tab( label = names_dict[pattern_options[i]] , 
+                                children = [ html.Div(
+                                                 html.Img(src= img_dict[pattern_options[i]][0],style={'height':'85%', 'width':'25%'} ),
+                                                 className = 'mt-4 mb-2'
+                                                  )
+                                            ],
+                                style={'padding':'0','line-height': '3v'},selected_style={'padding': '0','line-height': '3v'}
+                                )
+                tabs.append(tab_tmp)
+            tabs_card = dcc.Tabs( value = 'tab-1', 
+                                  children = tabs,
+                                  style={
+                                        'font-size': '70%',
+                                        'height': '3v'
+                                         } )
+
+            return [tabs_card]
+        else:
+            return [ '' ]
+    else:
+        return no_update 
