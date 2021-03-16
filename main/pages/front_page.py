@@ -135,11 +135,13 @@ card_options =  html.Div(
                         dbc.CardBody(
                             [
                                 #html.H5("OPTIONS", className="card-title"),
-                                html.P( "description of functionality", className="card-text"),
+                                html.H5( "Select Ticker Symbol", className="card-text mt-1"),
                                 html.Div(dropdown_assets),
-                                html.Div( [ html.Div(dropdown_patterns,className='col-12 m4',)],className='row mt-4' ),
-                                html.Div(date_picker, className='mt-4'),
-                                html.Div( html.Button('SCAN', id='scan-button', className='col-2 mr-4 mt-4') )
+                                html.H5( "Select Candlestick Pattern(s)", className="card-text mt-4"),
+                                html.Div( [ html.Div(dropdown_patterns,className='col-12 m4',)],className='row' ),
+                                html.H5( "Pick Date Range", className="card-text mt-4"),
+                                html.Div(date_picker),
+                                html.Div( html.Button('SCAN', id='scan-button', className='col-2 mr-4 mt-4 mb-1') )
         
                             ]
                     ),
