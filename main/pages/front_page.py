@@ -1,6 +1,7 @@
 import dash_core_components as dcc
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_daq as daq
 from dash.dependencies import Input, Output, State
 from dash import no_update
 import dash
@@ -51,6 +52,12 @@ date_picker = dcc.DatePickerRange(
                             end_date = str(datetime.date(datetime.now())),
                             )
 
+
+bool_switch1 = daq.BooleanSwitch(
+                                id='linear_plot_switch',
+                                on=False,
+                                color = '#3498db'
+                                )
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 #-------------------------------------------------------------------------------------------------------------------------------------------------------------#
 # LAYOUT CARDS
@@ -115,13 +122,18 @@ card3 =  html.Div(
 
 card_plot = html.Div(
     [
-        dbc.Card(
+        dbc.Card([
             dbc.CardBody(
-                [
-                    dcc.Graph(id = 'ohlc_plot'),
+                [   
+                    html.Div( [
+                                html.Div('Line Plot', className='col-sm-0 ml-4', style={'marginLeft':'10rem'}),
+                                html.Div(bool_switch1, className='col-sm-1'),
+                                 
+                             ], className='row justify-content-end' ),
+                    html.Div(dcc.Graph(id = 'ohlc_plot', style={'marginTop':'1.5rem'})),
                 ]
             ),
-        className="card bg-light mr-4 mt-4"
+        ], className="card bg-light mr-4 mt-4"
         )
     ]
 )
@@ -146,7 +158,7 @@ card_options =  html.Div(
                                # html.Div( html.Button('SCAN', id='scan-button', className='col-2 mr-4 mt-4 mb-1') )
         
                             ]
-                    ),
+                        ),
                 ],className="card bg-light ml-4 mt-4")
     ]
 )
@@ -218,12 +230,13 @@ layout = html.Div([
                [Input('dropdown_assets', 'value'),
                 Input('date-picker', 'start_date'),
                 Input('date-picker', 'end_date'),
+                Input('linear_plot_switch', 'on'),
                 Input('scan-button', 'n_clicks')
                ], 
 
                [State('dropdown_patterns', 'value')]
              )
-def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
+def Candlestick_plot(symbol, start_date, end_date, plot_switch, n_clicks, pattern_options):
     if symbol != None:
         #------------------ NAME CARD ------------------------#
         name = df_assets[df_assets['symbol'] == symbol].name
@@ -250,26 +263,55 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
         pct_change = str(last_diff) + f' USD (+{last_pct}%)' if last_pct>0 else str(last_diff) + f' USD ({last_pct}%)'
         color = {'color':'green'}  if last_pct>0 else {'color':'red'}
 
-        #------------------ CHART CARD ------------------------#
-        fig = go.Figure()
-        trace = go.Candlestick( x = df.index ,
-                                open = df.open,
-                                high = df.high,
-                                low = df.low,
-                                close = df.close,
-                                showlegend=False
+        #------------------ PRICE CHART CARD ------------------------#
+        #fig = go.Figure()
+        fig = make_subplots(specs=[[{"secondary_y": True}]])
+        #plot_switch = True  
+        #print('swticth ', plot_switch)
+        if plot_switch == False:
+            trace = go.Candlestick( x = df.index ,
+                                    open = df.open,
+                                    high = df.high,
+                                    low = df.low,
+                                    close = df.close,
+                                    showlegend=False,
+                                    )
+
+            title_chart = symbol + ' - Candlestick Chart'
+            yaxis_title = 'Price'
+        else:
+            trace = go.Scatter( x = df.index ,
+                                y = df.close,
+                                showlegend=False,
+                                
                                 )
 
-        layout = go.Layout( title = symbol + ' - Candlestick Chart',
+            title_chart = symbol + ' - Close Price Line Chart'
+            yaxis_title = 'Close Price'
+
+        fig.add_trace(trace, secondary_y=False)
+        #------------------ VOLUME CHART CARD ------------------------#
+        volume_trace = go.Bar(x=df.index,
+                              y=df.volume,
+                              showlegend=False,
+                              marker=dict(opacity=0.1, color='#3498db')
+                              )
+
+        fig.add_trace(volume_trace, secondary_y=True)
+        fig.update_yaxes(title_text="Volume", secondary_y=True)
+
+
+        #------------------LAYOUT ------------------------#
+
+        layout = go.Layout( title = title_chart,
                             xaxis = {'title' : 'Date', 'showgrid':False, 'type':'category'},
-                            yaxis = {'title': 'Price', 'showgrid':False},
+                            yaxis = {'title': yaxis_title, 'showgrid':False, 'range': ( df.low.min(), df.high.max())},
                             xaxis_rangeslider_visible = False,
                             plot_bgcolor = '#FFFFFF',
                             autosize=False,
                             height=478,
                             
                         )
-        fig.add_trace(trace)
         fig.update_layout(layout)
 
         #----------------- PATTERN CHART --------------------#
