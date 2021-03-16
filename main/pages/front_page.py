@@ -266,7 +266,7 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
                             xaxis_rangeslider_visible = False,
                             plot_bgcolor = '#FFFFFF',
                             autosize=False,
-                            height=475,
+                            height=478,
                             
                         )
         fig.add_trace(trace)
@@ -354,6 +354,7 @@ def candlestick_images(n_clicks, pattern_options):
                     strength = ''
                     indicator = ''
 
+
                 try:
                     split = direction.split('/')
                     split_c1 = 'success' if split[0] == 'bullish' or split[0] == 'up trend' else 'danger' if split[0] == 'bearish' or split[0] == 'down trend' else 'warning'
@@ -373,7 +374,7 @@ def candlestick_images(n_clicks, pattern_options):
                                                                ], className = 'row mt-4 mb-2'
                                                       )
                                                 ],
-                                    style={'padding':'0','line-height': '3v'}, selected_style={'padding': '0','line-height': '3v'}
+                                    style={'padding':'0','line-height': '3v'}, selected_style={'padding': '0','line-height': '3v', 'backgroundColor': '#3498db' , 'color':'white'}
                                     )
                 except:
                     tab_tmp = dcc.Tab( label = names_dict[pattern_options[i]] , 
@@ -388,7 +389,7 @@ def candlestick_images(n_clicks, pattern_options):
                                                                ], className = 'row mt-4 mb-2'
                                                       )
                                                 ],
-                                    style={'padding':'0','line-height': '3v'}, selected_style={'padding': '0','line-height': '3v'}
+                                    style={'padding':'0','line-height': '3v'}, selected_style={'padding': '0','line-height': '3v',  'backgroundColor': '#3498db' , 'color':'white'}
                                     )
                 tabs.append(tab_tmp)
             tabs_card = dcc.Tabs( value = 'tab-1', 
