@@ -140,8 +140,10 @@ card_options =  html.Div(
                                 html.H5( "Select Candlestick Pattern(s)", className="card-text mt-4"),
                                 html.Div( [ html.Div(dropdown_patterns,className='col-12 m4',)],className='row' ),
                                 html.H5( "Pick Date Range", className="card-text mt-4"),
-                                html.Div(date_picker),
-                                html.Div( html.Button('SCAN', id='scan-button', className='col-2 mr-4 mt-4 mb-1') )
+                                html.Div( [html.Div(date_picker, className='col-8'),  
+                                           html.Div( html.Button('SCAN', id='scan-button', style={'height':'45px', 'width':'150px'}, className='btn btn-info'), className='col-4')
+                                           ], className='row'),
+                               # html.Div( html.Button('SCAN', id='scan-button', className='col-2 mr-4 mt-4 mb-1') )
         
                             ]
                     ),
