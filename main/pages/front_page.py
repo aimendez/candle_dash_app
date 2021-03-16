@@ -262,6 +262,7 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
                             xaxis_rangeslider_visible = False,
                             plot_bgcolor = '#FFFFFF',
                             autosize=False,
+                            height=475,
                             
                         )
         fig.add_trace(trace)
@@ -317,11 +318,11 @@ def Candlestick_plot(symbol, start_date, end_date, n_clicks, pattern_options):
 # callback for pattern card images
 @app.callback( [ 
                  Output('pattern_description_id', 'children'),
-                ],              #
+                ],             
 
                [
                 Input('scan-button', 'n_clicks')
-               ], #
+               ], 
 
                [State('dropdown_patterns', 'value')]
              )
@@ -361,7 +362,7 @@ def candlestick_images(n_clicks, pattern_options):
                                                                     html.H5(names_dict[pattern_options[i]], style = {'fontSize':'10'}, className = 'ml-4 mt-2 row'),
                                                                     html.Div( [dbc.Badge(split[0], pill=True, color=split_c1,  style={'width':'4.7rem'} ), 
                                                                                dbc.Badge( split[1], pill=True, color=split_c2, className="ml-2", style={'width':'4.7rem'}  )
-                                                                               ], className= 'ml-4 mt-2 row'),
+                                                                               ], className= 'ml-4 mt-4 row'),
                                                                     html.Div( [ dbc.Badge(strength, pill=True, color=color1,  style={'width':'10rem'})], className="ml-4 mt-2 row"),
                                                                     html.Div( [ dbc.Badge(indicator, pill=True, color=color1, style={'width':'10rem'})], className="ml-4 mt-2 row"),
                                                                     ], className='col')
@@ -376,7 +377,7 @@ def candlestick_images(n_clicks, pattern_options):
                                                                  html.Div(html.Img(src= img_dict[pattern_options[i]][0],style={'height':'90%', 'width':'70%'}), className='col ml-4' ),
                                                                  html.Div([
                                                                     html.H5(names_dict[pattern_options[i]], style = {'fontSize':'10'}, className = 'ml-4 mt-2 row'),
-                                                                    html.Div(dbc.Badge(direction, pill=True, color=color1, style={'width':'10rem'}) ,className="ml-4 mt-2 row"),
+                                                                    html.Div(dbc.Badge(direction, pill=True, color=color1, style={'width':'10rem'}) ,className="ml-4 mt-4 row"),
                                                                     html.Div(dbc.Badge(strength, pill=True,  color=color1, style={'width':'10rem'}), className="ml-4 mt-2 row"),
                                                                     html.Div(dbc.Badge(indicator, pill=True, color=color1, style={'width':'10rem'}), className="ml-4 mt-2 row"),
                                                                     ], className='col')
