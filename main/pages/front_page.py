@@ -67,7 +67,7 @@ card_header_dash = html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3("CANDLE FINDER", className="card-title", style={'textAlign':"center"}),
+                        html.H3("CANDLE SCANNER", className="card-title", style={'textAlign':"center", 'font-weight': 'bold'}),
                         html.P("brief description of the dash", className="card-text", style={'textAlign':"center"}),
                     ]
             ),
@@ -306,6 +306,7 @@ def Candlestick_plot(symbol, start_date, end_date, plot_switch, n_clicks, patter
         layout = go.Layout( title = title_chart,
                             xaxis = {'title' : 'Date', 'showgrid':False, 'type':'category'},
                             yaxis = {'title': yaxis_title, 'showgrid':False, 'range': ( df.low.min(), df.high.max())},
+                            #yaxis2 = {'scaleanchor':"y2",'scaleratio':0.001},
                             xaxis_rangeslider_visible = False,
                             plot_bgcolor = '#FFFFFF',
                             autosize=False,
