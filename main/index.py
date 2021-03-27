@@ -14,7 +14,7 @@ app.layout = html.Div([
                                                     html.A('LANDAU DASH', className="nav-item nav-link btn"), 
                                                     #html.A('Screener', className="nav-link btn"),
                                                     html.A('Candle Scanner', className="nav-link btn"),
-                                                    html.A('Predictive Model', className="nav-link btn") 
+                                                    #html.A('AI Model', className="nav-link btn") 
                                                     ]),
     html.Div(id='page-content')
 ])

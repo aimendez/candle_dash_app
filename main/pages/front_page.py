@@ -34,6 +34,7 @@ dropdown_assets = dcc.Dropdown(
                             id = 'dropdown_assets',
                             options = asset_options,
                             placeholder = 'Select Company Symbol',
+                            value = 'AAPL'
                             )
 
 # Dropdown menu for CANDLE PATTERNS
@@ -48,8 +49,9 @@ dropdown_patterns = dcc.Dropdown(
 # DatePicker for DATE RANGE
 date_picker = dcc.DatePickerRange(
                             id='date-picker',
-                            start_date= datetime(2021, 1, 1),
+                            start_date= datetime(2020, 1, 1),
                             end_date = str(datetime.date(datetime.now())),
+                            style = {'fontSize':14}
                             )
 
 
@@ -67,7 +69,7 @@ card_header_dash = html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3("CANDLE SCANNER", className="card-title", style={'textAlign':"center", 'font-weight': 'bold'}),
+                        html.H5("CANDLE SCANNER", className="card-title", style={'textAlign':"center", 'font-weight': 'bold'}),
                         html.P("brief description of the dash", className="card-text", style={'textAlign':"center"}),
                     ]
             ),
@@ -81,8 +83,8 @@ card1 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3('Ticker', id='symbol_name_card', className="card-title"),
-                        html.H5('Company Name', id='symbol_name_card2', className="card-text text-muted"),
+                        html.H5('Ticker', id='symbol_name_card', className="card-title"),
+                        html.H6('Company Name', id='symbol_name_card2', className="card-text text-muted"),
                     ]
             ),
         className="card bg-light mt-4 mr-4"
@@ -95,8 +97,8 @@ card2 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3('Exchange', id = 'exchange_card', className="card-title"),
-                        html.H5('Class', id = 'class_card', className="card-text text-muted"),
+                        html.H5('Exchange', id = 'exchange_card', className="card-title"),
+                        html.H6('Class', id = 'class_card', className="card-text text-muted"),
                     ]
             ),
         className="card bg-light  mt-4 mr-4"
@@ -109,8 +111,8 @@ card3 =  html.Div(
         dbc.Card( 
                 dbc.CardBody(
                     [
-                        html.H3('Price' , id = 'close_price_card', className="card-title"),
-                        html.Pre( html.H5('---  (---%)' , id = 'price_diff_card', className="card-text"), className = 'mb-0' ),
+                        html.H5('Price' , id = 'close_price_card', className="card-title"),
+                        html.Pre( html.H6('---  (---%)' , id = 'price_diff_card', className="card-text"), className = 'mb-0' ),
                     ]
             ),
         className="card bg-light  mt-4 mr-4"
@@ -147,13 +149,13 @@ card_options =  html.Div(
                         dbc.CardBody(
                             [
                                 #html.H5("OPTIONS", className="card-title"),
-                                html.H5( "Select Ticker Symbol", className="card-text mt-1"),
+                                html.H6( "Select Ticker Symbol", className="card-text mt-1"),
                                 html.Div(dropdown_assets),
-                                html.H5( "Select Candlestick Pattern(s)", className="card-text mt-4"),
+                                html.H6( "Select Candlestick Pattern(s)", className="card-text mt-4"),
                                 html.Div( [ html.Div(dropdown_patterns,className='col-12 m4',)],className='row' ),
-                                html.H5( "Pick Date Range", className="card-text mt-4"),
+                                html.H6( "Pick Date Range", className="card-text mt-4"),
                                 html.Div( [html.Div(date_picker, className='col-8'),  
-                                           html.Div( html.Button('SCAN', id='scan-button', style={'height':'45px', 'width':'150px'}, className='btn btn-info'), className='col-4')
+                                           html.Div( html.Button('SCAN', id='scan-button', style={'height':'40px', 'width':'100px'}, className='btn btn-info'), className='col-4')
                                            ], className='row'),
                                # html.Div( html.Button('SCAN', id='scan-button', className='col-2 mr-4 mt-4 mb-1') )
         
@@ -192,7 +194,7 @@ layout = html.Div([
                 dbc.Col( [
                     (card_options),
                     (card_patterns)
-                    ], width=4 ),
+                    ], width= 3 ),
 
                 dbc.Col([  
                     dbc.Row( 
@@ -204,7 +206,7 @@ layout = html.Div([
                     dbc.Row(
                         dbc.Col(card_plot)
                         ),
-                    ], width = 8 )
+                    ], width = 9 )
 
             ])
 ])
@@ -264,10 +266,7 @@ def Candlestick_plot(symbol, start_date, end_date, plot_switch, n_clicks, patter
         color = {'color':'green'}  if last_pct>0 else {'color':'red'}
 
         #------------------ PRICE CHART CARD ------------------------#
-        #fig = go.Figure()
         fig = make_subplots(specs=[[{"secondary_y": True}]])
-        #plot_switch = True  
-        #print('swticth ', plot_switch)
         if plot_switch == False:
             trace = go.Candlestick( x = df.index ,
                                     open = df.open,
@@ -275,6 +274,7 @@ def Candlestick_plot(symbol, start_date, end_date, plot_switch, n_clicks, patter
                                     low = df.low,
                                     close = df.close,
                                     showlegend=False,
+                                    name = 'OHLC'
                                     )
 
             title_chart = symbol + ' - Candlestick Chart'
@@ -283,6 +283,7 @@ def Candlestick_plot(symbol, start_date, end_date, plot_switch, n_clicks, patter
             trace = go.Scatter( x = df.index ,
                                 y = df.close,
                                 showlegend=False,
+                                name = 'CLOSE'
                                 
                                 )
 
@@ -294,11 +295,13 @@ def Candlestick_plot(symbol, start_date, end_date, plot_switch, n_clicks, patter
         volume_trace = go.Bar(x=df.index,
                               y=df.volume,
                               showlegend=False,
-                              marker=dict(opacity=0.1, color='#3498db')
+                              marker=dict(opacity=0.1, color='#3498db'),
+                              name = 'VOL'
                               )
 
         fig.add_trace(volume_trace, secondary_y=True)
-        fig.update_yaxes(title_text="Volume", secondary_y=True)
+        #fig.update_yaxes(title_text="Volume", secondary_y=True)
+        fig.update_yaxes(showticklabels=False, secondary_y=True)
 
 
         #------------------LAYOUT ------------------------#
@@ -308,11 +311,13 @@ def Candlestick_plot(symbol, start_date, end_date, plot_switch, n_clicks, patter
                             yaxis = {'title': yaxis_title, 'showgrid':False, 'range': ( df.low.min(), df.high.max())},
                             #yaxis2 = {'scaleanchor':"y2",'scaleratio':0.001},
                             xaxis_rangeslider_visible = False,
-                            plot_bgcolor = '#FFFFFF',
-                            autosize=False,
-                            height=478,
-                            
-                        )
+                            #plot_bgcolor = '#FFFFFF',
+                            plot_bgcolor='rgba(0,0,0,0)',
+                            #autosize=False,
+                            #height=478,
+                            margin=go.layout.Margin( r = 0 ),
+                            paper_bgcolor='rgba(0,0,0,0)',
+                         )
         fig.update_layout(layout)
 
         #----------------- PATTERN CHART --------------------#
@@ -334,7 +339,8 @@ def Candlestick_plot(symbol, start_date, end_date, plot_switch, n_clicks, patter
                                                             size = 15,
                                                             color='black',
                                                             symbol = 'arrow-down'
-                                                            )
+                                                            ),
+                                                showlegend=False,
                                                 )
                     fig.add_trace(trace_pattern)
             fig.update_layout(legend=dict(
@@ -407,12 +413,12 @@ def candlestick_images(n_clicks, pattern_options):
                                        children = [  html.Div([
                                                                  html.Div(html.Img(src= img_dict[pattern_options[i]][0],style={'height':'90%', 'width':'70%'}), className='col ml-4' ),
                                                                  html.Div([
-                                                                    html.H5(names_dict[pattern_options[i]], style = {'fontSize':'10'}, className = 'ml-4 mt-2 row'),
+                                                                    html.H6(names_dict[pattern_options[i]], style = {'fontSize':'5'}, className = 'ml-0 mt-0 row'),
                                                                     html.Div( [dbc.Badge(split[0], pill=True, color=split_c1,  style={'width':'4.7rem'} ), 
                                                                                dbc.Badge( split[1], pill=True, color=split_c2, className="ml-2", style={'width':'4.7rem'}  )
-                                                                               ], className= 'ml-4 mt-4 row'),
-                                                                    html.Div( [ dbc.Badge(strength, pill=True, color=color1,  style={'width':'10rem'})], className="ml-4 mt-2 row"),
-                                                                    html.Div( [ dbc.Badge(indicator, pill=True, color=color1, style={'width':'10rem'})], className="ml-4 mt-2 row"),
+                                                                               ], className= 'ml-0 mt-4 row'),
+                                                                    html.Div( [ dbc.Badge(strength, pill=True, color=color1,  style={'width':'10rem'})], className="ml-0 mt-2 row"),
+                                                                    html.Div( [ dbc.Badge(indicator, pill=True, color=color1, style={'width':'10rem'})], className="ml-0 mt-2 row"),
                                                                     ], className='col')
                                                                ], className = 'row mt-4 mb-2'
                                                       )
@@ -424,10 +430,10 @@ def candlestick_images(n_clicks, pattern_options):
                                        children = [  html.Div([
                                                                  html.Div(html.Img(src= img_dict[pattern_options[i]][0],style={'height':'90%', 'width':'70%'}), className='col ml-4' ),
                                                                  html.Div([
-                                                                    html.H5(names_dict[pattern_options[i]], style = {'fontSize':'10'}, className = 'ml-4 mt-2 row'),
-                                                                    html.Div(dbc.Badge(direction, pill=True, color=color1, style={'width':'10rem'}) ,className="ml-4 mt-4 row"),
-                                                                    html.Div(dbc.Badge(strength, pill=True,  color=color1, style={'width':'10rem'}), className="ml-4 mt-2 row"),
-                                                                    html.Div(dbc.Badge(indicator, pill=True, color=color1, style={'width':'10rem'}), className="ml-4 mt-2 row"),
+                                                                    html.H6(names_dict[pattern_options[i]], style = {'fontSize':'5'}, className = 'ml-0 mt-0 row'),
+                                                                    html.Div(dbc.Badge(direction, pill=True, color=color1, style={'width':'10rem'}) ,className="ml-0 mt-4 row"),
+                                                                    html.Div(dbc.Badge(strength, pill=True,  color=color1, style={'width':'10rem'}), className="ml-0 mt-2 row"),
+                                                                    html.Div(dbc.Badge(indicator, pill=True, color=color1, style={'width':'10rem'}), className="ml-0 mt-2 row"),
                                                                     ], className='col')
                                                                ], className = 'row mt-4 mb-2'
                                                       )
