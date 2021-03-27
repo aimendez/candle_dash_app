@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 from app import app
-from pages import test, front_page
+from pages import test, scanner, screener
 import utils 
 
 server = app.server
@@ -12,9 +12,8 @@ app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
      html.Nav(className = "navbar navbar-expand-lg navbar-dark bg-dark", children=[
                                                     html.A('LANDAU DASH', className="nav-item nav-link btn"), 
-                                                    #html.A('Screener', className="nav-link btn"),
-                                                    html.A('Candle Scanner', className="nav-link btn"),
-                                                    #html.A('AI Model', className="nav-link btn") 
+                                                    html.A('Screener', className="nav-link btn", href = '/screener'),
+                                                    html.A('Candle Scanner', className="nav-link btn", href = '/scanner'),
                                                     ]),
     html.Div(id='page-content')
 ])
@@ -23,7 +22,12 @@ app.layout = html.Div([
 @app.callback(Output('page-content', 'children'),
               [Input('url', 'pathname')])
 def display_page(pathname):
-    return front_page.layout
+    if pathname == '/scanner' or   pathname == '/' :
+        return scanner.layout
+    elif pathname == '/screener':
+        return screener.layout
+    else:
+        return scanner.layout
     
 if __name__ == '__main__':
     app.run_server(debug=True)

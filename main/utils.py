@@ -1,7 +1,7 @@
 import pandas as pd 
 from yahooquery import Ticker
 
-def get_data(symbol, start, end):
+def get_data(symbol, start=None, end=None):
 
 	# Historical Data with yfinance:
 	#ticker = yf.Ticker(symbol)
@@ -14,7 +14,10 @@ def get_data(symbol, start, end):
 
 	# Historical Data with yahooquery
 	ticker = Ticker(symbol, asynchronous=True)
-	data = ticker.history(period='1d', interval='1d', start=start, end=end)
+	if start == None and end == None:
+		data = ticker.history(period='1d', interval='1d')
+	else:
+		data = ticker.history(period='1d', interval='1d', start=start, end=end)
 
 	if not isinstance(data, dict):
 		data = data.droplevel(0)
